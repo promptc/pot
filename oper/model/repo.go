@@ -15,7 +15,7 @@ type PromptInfo struct {
 }
 
 type RepoInfo struct {
-	Url        string `json:"url"`         // https://promptc.dev
-	Db         string `json:"db"`          // https://raw.githubusercontent.com/promptc/repository/main/promptc.dev.db
-	UniqueName string `json:"unique_name"` // promptc.dev
+	Prompt string `json:"prompt"` // https://promptc.dev/prompts
+	Db     string `json:"db"`     // https://raw.githubusercontent.com/promptc/repository/main/promptc.dev.db
+	Id     string `json:"id"`     // promptc.dev
 }

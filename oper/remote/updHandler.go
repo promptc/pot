@@ -13,7 +13,7 @@ import (
 
 func UpdateHandler(args []string) {
 	conf := cfg.Get()
-	var fetchedDb []string
+	fetchedDb := make(map[string]string, 0)
 	if len(conf.Source) == 0 {
 		fmt.Println("No source found!") // TODO: warning!
 		return
@@ -58,7 +58,7 @@ func UpdateHandler(args []string) {
 			continue
 		}
 		defer resp.Body.Close()
-		file, err := os.Create(shared.GetDbPath(repoInfo.UniqueName + "-new"))
+		file, err := os.Create(shared.GetDbPath(repoInfo.Id + "-new"))
 		if err != nil {
 			fmt.Println("--- Error:", err)
 			fmt.Println("--- Warn:", "Ignore")
@@ -71,17 +71,52 @@ func UpdateHandler(args []string) {
 			fmt.Println("--- Warn:", "Ignore")
 			continue
 		}
-		fetchedDb = append(fetchedDb, repoInfo.UniqueName)
+		fetchedDb[repoInfo.Id] = repoInfo.Prompt
 
 	}
 	fmt.Println("- Fetched", len(fetchedDb), "source(s)")
 	fmt.Println("- Updating database...")
-	for _, db := range fetchedDb {
+	for db, _ := range fetchedDb {
 		_ = os.Remove(shared.GetDbPath(db))
 		err := os.Rename(shared.GetDbPath(db+"-new"), shared.GetDbPath(db))
 		if err != nil {
 			panic(err)
 		}
 	}
+	updatePromptTarget(fetchedDb)
 	fmt.Println("- Database updated")
+}
+
+func updatePromptTarget(fetchedDb map[string]string) {
+	var db map[string]string
+	dbInfoPath := shared.DbInfo.ToPath()
+	if shared.FileExists(dbInfoPath) {
+		jFile, err := os.Open(dbInfoPath)
+		if err != nil {
+			panic(err)
+		}
+		bs, err := io.ReadAll(jFile)
+		jFile.Close()
+		if err != nil {
+			panic(err)
+		}
+		err = json.Unmarshal(bs, &db)
+		if err != nil {
+			panic(err)
+		}
+	}
+	if db == nil || len(db) == 0 {
+		db = make(map[string]string, 0)
+	}
+	for id, prompt := range fetchedDb {
+		db[id] = prompt
+	}
+	bs, err := json.Marshal(db)
+	if err != nil {
+		panic(err)
+	}
+	err = os.WriteFile(dbInfoPath, bs, 0644)
+	if err != nil {
+		panic(err)
+	}
 }

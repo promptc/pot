@@ -23,6 +23,8 @@ const (
 	ConfigPath PotPath = "config.json"
 )
 
+var DbInfo = PotPath(path.Join("db", "info.json"))
+
 func (p PotPath) ToPath() string {
 	return path.Join(GetUserFolder(), string(p))
 }
