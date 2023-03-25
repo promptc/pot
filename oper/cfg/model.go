@@ -6,6 +6,6 @@ type Model struct {
 
 func defaultModel() *Model {
 	return &Model{
-		Source: []string{"https://raw.githubusercontent.com/promptc/repository/main/db.json"},
+		Source: []string{"https://raw.githubusercontent.com/promptc/repository/main/"},
 	}
 }
