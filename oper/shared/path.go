@@ -1,6 +1,7 @@
 package shared
 
 import (
+	"os"
 	"path"
 	"runtime"
 )
@@ -28,4 +29,23 @@ func (p PotPath) ToPath() string {
 
 func GetPath(potPath PotPath) string {
 	return path.Join(GetUserFolder(), string(potPath))
+}
+
+func GetDbPath(dbname string) string {
+	return path.Join(GetUserFolder(), "db", dbname+".db")
+}
+
+func GetDbFolder() string {
+	return path.Join(GetUserFolder(), "db")
+}
+
+func InitPath() {
+	err := os.MkdirAll(GetUserFolder(), 0755)
+	if err != nil && !os.IsExist(err) {
+		panic(err)
+	}
+	err = os.MkdirAll(GetDbFolder(), 0755)
+	if err != nil && !os.IsExist(err) {
+		panic(err)
+	}
 }

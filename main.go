@@ -4,6 +4,7 @@ import (
 	"github.com/promptc/pot/oper/help"
 	"github.com/promptc/pot/oper/pack"
 	"github.com/promptc/pot/oper/remote"
+	"github.com/promptc/pot/oper/shared"
 	"os"
 )
 
@@ -13,6 +14,7 @@ func main() {
 		help.Welcome()
 		return
 	}
+	shared.InitPath()
 	verb := args[0]
 	args = args[1:]
 	handler := verbParser(verb)

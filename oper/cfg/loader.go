@@ -7,20 +7,12 @@ import (
 	"os"
 )
 
-func createPath() {
-	err := os.MkdirAll(shared.ConfigPath.ToPath(), 0755)
-	if err != nil && !os.IsExist(err) {
-		panic(err)
-	}
-}
-
 var cfg *Model
 
 func Get() *Model {
 	if cfg != nil {
 		return cfg
 	}
-	createPath()
 	cfgFile := shared.ConfigPath.ToPath()
 	if shared.FileExists(cfgFile) {
 		jFile, err := os.Open(cfgFile)
@@ -36,9 +28,10 @@ func Get() *Model {
 		if err != nil {
 			panic(err)
 		}
+	} else {
+		cfg = defaultModel()
+		Save()
 	}
-	cfg = defaultModel()
-	Save()
 	return cfg
 }
 
